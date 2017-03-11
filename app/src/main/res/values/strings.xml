@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Drawing For Fun</string>
+
+    <string name="sml">Small</string>
+    <string name="med">Medium</string>
+    <string name="lrg">Large</string>
+</resources>
