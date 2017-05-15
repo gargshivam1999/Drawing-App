@@ -205,18 +205,18 @@ public class DrawingView extends View {
     }
 
 
-
     public Bitmap saveDrawing() {
 
         Bitmap bitmap = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         this.draw(canvas);
-
-
-
         return bitmap;
     }
 
+    public void importDrawing(Bitmap bitmap) {
+        bitmap = Bitmap.createScaledBitmap(bitmap,mBitmap.getWidth(), mBitmap.getHeight(), true);
+        mCanvas.drawBitmap(bitmap, 0, 0, mPaint);
+    }
 
     public void startNew() {
         mCanvas.drawColor(0, PorterDuff.Mode.CLEAR);

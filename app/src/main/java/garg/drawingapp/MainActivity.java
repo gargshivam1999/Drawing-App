@@ -3,14 +3,20 @@ package garg.drawingapp;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private float smallBrush, mediumBrush, largeBrush;
     private String fileName;
     private boolean isSaved;
+    private static int IMG_RESULT = 1;
 
     enum DrawingType {
         Rectangle,
@@ -39,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Line
     }
 
-    ImageButton newDrawing, saveDrawing, erase, rectangle, roundRectangle, eclipse, brush, line, colorPalette;
+    private ImageButton newDrawing, importDrawing, saveDrawing, erase, rectangle, roundRectangle, eclipse, brush, line, colorPalette;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -57,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         largeBrush = getResources().getInteger(R.integer.large_size);
 
         newDrawing = (ImageButton) findViewById(R.id.new_drawing);
+        importDrawing = (ImageButton) findViewById(R.id.import_drawing);
         saveDrawing = (ImageButton) findViewById(R.id.save_drawing);
         erase = (ImageButton) findViewById(R.id.erase);
         rectangle = (ImageButton) findViewById(R.id.rectangle);
@@ -91,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 newDialog.show();
+            }
+        });
+
+        importDrawing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                importDrawing();
             }
         });
 
@@ -166,6 +181,47 @@ public class MainActivity extends AppCompatActivity {
                 show();
             }
         });
+
+    }
+
+    private void importDrawing() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, IMG_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+
+            if (requestCode == IMG_RESULT && resultCode == RESULT_OK
+                    && null != data) {
+
+
+                Uri URI = data.getData();
+                String[] FILE = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(URI,
+                        FILE, null, null, null);
+
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(FILE[0]);
+                String ImageDecode = cursor.getString(columnIndex);
+                cursor.close();
+
+                /*imageViewLoad.setImageBitmap(BitmapFactory
+                        .decodeFile(ImageDecode));*/
+
+                drawView.importDrawing(BitmapFactory.decodeFile(ImageDecode));
+
+            }
+        } catch (Exception e) {
+            Log.e("Exception", e.toString());
+            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
+                    .show();
+        }
 
     }
 

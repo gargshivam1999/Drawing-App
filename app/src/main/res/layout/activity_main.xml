@@ -28,6 +28,14 @@
                 android:src="@drawable/new_drawing" />
 
             <ImageButton
+                android:id="@+id/import_drawing"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/import_drawing" />
+
+
+            <ImageButton
                 android:id="@+id/save_drawing"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
